@@ -145,7 +145,7 @@
 
 	  getJSONData: function () {
 	    var data;
-	    var trackedControlsComponent = this.el.components['tracked-controls'];
+	    var trackedControlsComponent = this.el.components['tracked-controls-webxr'];
 	    var controller = trackedControlsComponent && trackedControlsComponent.controller;
 	    if (!this.recordedPoses) { return; }
 	    data = {
@@ -209,8 +209,8 @@
 	      this.lastTimestamp = time;
 	      if (!this.data.enabled || !this.isRecording) { return; }
 	      newPoint = {
-	        position: this.el.getAttribute('position'),
-	        rotation: this.el.getAttribute('rotation'),
+	        position: {...this.el.getAttribute('position')},
+	        rotation: {...this.el.getAttribute('rotation')},
 	        timestamp: time
 	      };
 	      this.recordedPoses.push(newPoint);
@@ -919,9 +919,9 @@
 	    // Geometries
 	    this.geometry = new THREE.BufferGeometry();
 	    this.geometry.setDrawRange(0, 0);
-	    this.geometry.addAttribute('position', new THREE.BufferAttribute(this.vertices, 3).setDynamic(true));
-	    this.geometry.addAttribute('uv', new THREE.BufferAttribute(this.uvs, 2).setDynamic(true));
-	    this.geometry.addAttribute('normal', new THREE.BufferAttribute(this.normals, 3).setDynamic(true));
+	    this.geometry.setAttribute('position', new THREE.BufferAttribute(this.vertices, 3).setUsage(THREE.DynamicDrawUsage));
+	    this.geometry.setAttribute('uv', new THREE.BufferAttribute(this.uvs, 2).setUsage(THREE.DynamicDrawUsage));
+	    this.geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals, 3).setUsage(THREE.DynamicDrawUsage));
 
 	    this.material = new THREE.MeshStandardMaterial({
 	      color: this.data.color,
@@ -1302,18 +1302,17 @@
 	AFRAME.registerSystem('motion-capture-replayer', {
 	  init: function () {
 	    var sceneEl = this.sceneEl;
-	    var trackedControlsSystem = sceneEl.systems['tracked-controls'];
-	    var trackedControlsTick = AFRAME.components['tracked-controls'].Component.prototype.tick;
+	    var trackedControlsSystem = sceneEl.systems['tracked-controls-webxr'];
 	    this.gamepads = [];
 	    this.updateControllerListOriginal = trackedControlsSystem.updateControllerList.bind(trackedControlsSystem);
-	    sceneEl.systems['tracked-controls'].updateControllerList = this.updateControllerList.bind(this);
+	    sceneEl.systems['tracked-controls-webxr'].updateControllerList = this.updateControllerList.bind(this);
 	    AFRAME.components['tracked-controls'].Component.prototype.tick = this.trackedControlsTickWrapper;
-	    AFRAME.components['tracked-controls'].Component.prototype.trackedControlsTick = trackedControlsTick;
 	  },
 
 	  trackedControlsTickWrapper: function (time, delta) {
 	    if (this.el.components['motion-capture-replayer']) { return; }
-	    this.trackedControlsTick(time, delta);
+		// TODO
+	    //this.trackedControlsTick(time, delta);
 	  },
 
 	  updateControllerList: function () {

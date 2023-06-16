@@ -7,13 +7,18 @@ AFRAME.registerComponent('collect-url', {
     this.soundEl = document.querySelector('#room [sound]');
     textElement.setAttribute('visible', true);
 
-    var object = { opacity: 0.0 };
-    new AFRAME.TWEEN.Tween(object)
-      .to({opacity: 1.0}, 1000)
-      .onUpdate(function () {
-        textElement.setAttribute('text', {opacity: object.opacity});
-      })
-      .start();
+    [...textElement.children].forEach(childTextElement => {
+      childTextElement.setAttribute('animation', {
+        property: 'text.opacity',
+        to: 1.0,
+        dur: 1000,
+      });
+      childTextElement.addEventListener('animationcomplete', function onAnimationComplete() {
+        childTextElement.removeAttribute('animation');
+        childTextElement.removeEventListener('animatoincomplete', onAnimationComplete);
+      });
+    })
+
     var json = {
       avatar: selectedAvatarEl.id,
       recording: this.el.components['avatar-recorder'].getJSONData()

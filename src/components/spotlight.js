@@ -15,7 +15,7 @@ AFRAME.registerComponent('spotlight', {
       z: this.data.speed.z + Math.random() * 500
     };
     this.initialRotation = this.el.getAttribute('rotation');
-    var mesh = this.el.getObject3D('mesh').children[0].children[0];
+    var mesh = this.el.getObject3D('mesh').children[0];
 
     if (!mesh.children.length) return;
     var texture = new THREE.TextureLoader().load( document.getElementById('spotlight-img').getAttribute('src') );

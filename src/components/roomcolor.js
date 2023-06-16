@@ -2,7 +2,7 @@
 
 AFRAME.registerComponent('roomcolor', {
   schema: {
-    default: '#FFF'
+    default: 1.0
   },
   init : function () {
     this.el.addEventListener('model-loaded', this.update.bind(this));
@@ -11,6 +11,6 @@ AFRAME.registerComponent('roomcolor', {
     if (oldData == this.data) return;
     var mesh = this.el.getObject3D('mesh');
     if (!mesh) return;
-    mesh.children[0].children[0].children[0].material.color.set(this.data);
+    mesh.children[0].children[0].material.emissiveIntensity = this.data;
   }
 })

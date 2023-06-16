@@ -20,17 +20,17 @@ AFRAME.registerComponent('dancing', {
 
     textElement.setAttribute('visible', true);
     textElement.setAttribute('text', {value: 'Dance!', opacity: 1});
-    var object = { opacity: 1.0 };
-    new AFRAME.TWEEN.Tween(object)
-      .to({opacity: 0.0}, 500)
-      .delay(300)
-      .onUpdate(function () {
-        textElement.setAttribute('text', {opacity: object.opacity});
-      })
-      .onComplete(function () {
-        textElement.setAttribute('visible', false);
-      })
-      .start();
+    textElement.setAttribute('animation', {
+      property: 'text.opacity',
+      to: 0.0,
+      dur: 500,
+      delay: 300
+    });
+    textElement.addEventListener('animationcomplete', function onAnimationComplete() {
+      textElement.setAttribute('visible', false);
+      textElement.removeAttribute('animation');
+      textElement.removeEventListener('animationcomplete', onAnimationComplete);
+    });
 
     counter0.setAttribute('text', {value: '!!'});
     counter1.setAttribute('text', {value: '!!'});
@@ -110,12 +110,14 @@ AFRAME.registerComponent('dancing', {
     this.counter0.setAttribute('visible', false);
     this.counter1.setAttribute('visible', false);
     leftHandEl.removeAttribute('tracked-controls');
+    leftHandEl.removeAttribute('tracked-controls-webxr');
     leftHandEl.removeAttribute('vive-controls');
     leftHandEl.removeAttribute('oculus-touch-controls');
     leftHandEl.setAttribute('position', {x: 0, y: 0, z:0});
     leftHandEl.setAttribute('rotation', {x: 0, y: 0, z:0});
 
     rightHandEl.removeAttribute('tracked-controls');
+    rightHandEl.removeAttribute('tracked-controls-webxr');
     rightHandEl.removeAttribute('vive-controls');
     rightHandEl.removeAttribute('oculus-touch-controls');
     rightHandEl.setAttribute('position', {x: 0, y: 0, z:0});
