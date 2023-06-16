@@ -32,8 +32,6 @@ AFRAME.registerComponent('collect-url', {
     this.soundEl.components.sound.playSound();
     el.setAttribute('game-state', 'state', 'replay');
     el.components['replay'].loadDance(json);
-    // Analytics. We want to count the global number of recorded dances.
-    ga('send', 'event', 'a-saturday-night', 'dancerecorded');
   },
 
   remove: function () {
