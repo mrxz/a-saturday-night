@@ -8,6 +8,10 @@ html.a-fullscreen canvas.a-canvas {
   position: inherit !important;
 }
 
+.a-enter-vr.fullscreen {
+  display: none;
+}
+
 .credits {
   padding: 0 10px;
   margin-top: 50px;
