@@ -7,7 +7,8 @@ AFRAME.registerComponent('collect-url', {
     this.soundEl = document.querySelector('#room [sound]');
     textElement.setAttribute('visible', true);
 
-    [...textElement.children].forEach(childTextElement => {
+    for(var i = 0; i < textElement.children.length; i++) {
+      var childTextElement = textElement.children[i];
       childTextElement.setAttribute('animation', {
         property: 'text.opacity',
         to: 1.0,
@@ -17,7 +18,7 @@ AFRAME.registerComponent('collect-url', {
         childTextElement.removeAttribute('animation');
         childTextElement.removeEventListener('animatoincomplete', onAnimationComplete);
       });
-    })
+    }
 
     var json = {
       avatar: selectedAvatarEl.id,
@@ -28,7 +29,8 @@ AFRAME.registerComponent('collect-url', {
     delete json.recording['rightSelectionHand'];
     if (json.recording.rightHand) { json.recording.rightHand.events = []; }
     if (json.recording.leftHand) { json.recording.leftHand.events = []; }
-    el.systems['uploadcare'].upload(json, 'application/json');
+    // Upload is defunct
+    //el.systems['uploadcare'].upload(json, 'application/json');
     this.soundEl.components.sound.playSound();
     el.setAttribute('game-state', 'state', 'replay');
     el.components['replay'].loadDance(json);

@@ -20,28 +20,6 @@ window.addEventListener('load', function (event) {
     instructions.classList.add('hide');
   });
 
-  document.addEventListener('uploadcare-upload-completed', function (event) {
-    console.log('completed');
-    shareDiv.classList.remove('hide');
-    progressDiv.classList.add('hide');
-    var url = location.protocol + '//' + location.host + location.pathname + '?url=' + event.detail.url;
-    shareUrl.value = url;
-    document.getElementById('sharetwitter').href = 'https://twitter.com/intent/tweet?text=Check out my moves on A-Saturday-Night!&url=' + url + '&hashtags=aframe,webvr,mozillavr,saturdaynight';
-    document.getElementById('sharefacebook').href = 'http://www.facebook.com/share.php?u=' + url;
-  });
-
-  document.addEventListener('uploadcare-upload-started', function (event) {
-    console.log('started');
-
-    asaturdayUI.classList.remove('hide');
-    shareDiv.classList.add('hide');
-    progressDiv.classList.remove('hide');
-  });
-
-  document.addEventListener('uploadcare-upload-progress', function (event) {
-      progressBar.style.width = Math.floor(event.detail.progress * 100) + '%';
-  });
-
   var clipboard = new Clipboard('.button.copy');
   clipboard.on('error', function (e) {
     console.error('Error copying to clipboard:', e.action, e.trigger);

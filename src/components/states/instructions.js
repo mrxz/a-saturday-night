@@ -31,15 +31,8 @@ AFRAME.registerComponent('instructions', {
   },
 
   downloadDance: function () {
-    var urlParams = getUrlParams();
-    var self = this;
-    if (urlParams.url) {
-      this.el.sceneEl.systems['uploadcare'].download(urlParams.url, function (data) {
-        self.handleDanceData(data.content);
-      });
-    } else {
-      this.handleDanceData(defaultDanceData);
-    }
+    // Download is disabled, always playback the default dance
+    this.handleDanceData(defaultDanceData);
   },
 
   setupStartButton: function () {
