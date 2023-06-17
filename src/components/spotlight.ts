@@ -1,10 +1,11 @@
 AFRAME.registerComponent('spotlight', {
   schema: {
     color: {default: '#FFFFFF'},
-    speed: {default: {x: 500, y: 400, z: 600}}
+    speed: {type: 'vec3', default: {x: 500, y: 400, z: 600}}
   },
   init: function () {
     this.star = null;
+    // @ts-ignore
     this.el.addEventListener('model-loaded', this.update.bind(this));
   },
   update: function (oldData) {
@@ -18,9 +19,8 @@ AFRAME.registerComponent('spotlight', {
     var mesh = this.el.getObject3D('mesh').children[0];
 
     if (!mesh.children.length) return;
-    var texture = new THREE.TextureLoader().load( document.getElementById('spotlight-img').getAttribute('src') );
+    var texture = new THREE.TextureLoader().load( document.getElementById('spotlight-img')!.getAttribute('src') );
     var material = new THREE.MeshBasicMaterial({
-        shading: THREE.FlatShading,
         color: this.data.color,
         transparent: true,
         alphaMap: texture,
@@ -29,13 +29,12 @@ AFRAME.registerComponent('spotlight', {
         depthWrite: false,
       });
     for (var i = 0; i < mesh.children.length; i++) {
-      mesh.children[i].material = material;
+      (mesh.children[i] as THREE.Mesh).material = material;
     }
     
     if (this.star === null) {
-      var starTexture = new THREE.TextureLoader().load( document.getElementById('star-img').getAttribute('src') );
+      var starTexture = new THREE.TextureLoader().load( document.getElementById('star-img')!.getAttribute('src') );
       var starMaterial = new THREE.SpriteMaterial({
-        shading: THREE.FlatShading,
         transparent: true,
         map: starTexture,
         color: this.data.color,

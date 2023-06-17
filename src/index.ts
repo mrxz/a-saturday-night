@@ -1,4 +1,4 @@
-import './lib/aframe-master.js';
+import 'aframe';
 import './lib/aframe-motion-capture-components.js';
 
 import './ui2d.js';

@@ -1,17 +1,20 @@
+import { Entity } from "aframe";
+
 AFRAME.registerComponent('collect-url', {
   init: function () {
-    document.getElementById('floor').setAttribute('discofloor', {pattern: 'idle'});
+    //@ts-ignore
+    document.getElementById('floor')!.setAttribute('discofloor', {pattern: 'idle'});
     var el = this.el;
-    var textElement = this.textElement = document.getElementById('collectText');
-    var selectedAvatarEl = this.el.getAttribute('game-state').selectedAvatar;
+    var textElement = this.textElement = document.getElementById('collectText')!;
+    var selectedAvatarEl = this.el.getAttribute('game-state')!.selectedAvatar!;
     this.soundEl = document.querySelector('#room [sound]');
     textElement.setAttribute('visible', true);
 
     for(var i = 0; i < textElement.children.length; i++) {
-      var childTextElement = textElement.children[i];
+      var childTextElement = textElement.children[i] as Entity;
       childTextElement.setAttribute('animation', {
         property: 'text.opacity',
-        to: 1.0,
+        to: 1.0 as unknown as string, // FIXME
         dur: 1000,
       });
       childTextElement.addEventListener('animationcomplete', function onAnimationComplete() {
@@ -22,6 +25,7 @@ AFRAME.registerComponent('collect-url', {
 
     var json = {
       avatar: selectedAvatarEl.id,
+      //@ts-ignore
       recording: this.el.components['avatar-recorder'].getJSONData()
     }
     // @fixme Hack to fix serialization errors on events
@@ -33,7 +37,7 @@ AFRAME.registerComponent('collect-url', {
     //el.systems['uploadcare'].upload(json, 'application/json');
     this.soundEl.components.sound.playSound();
     el.setAttribute('game-state', 'state', 'replay');
-    el.components['replay'].loadDance(json);
+    el.components['replay']!.loadDance(json);
   },
 
   remove: function () {

@@ -1,3 +1,5 @@
+import { EntityEvents } from "aframe";
+
 AFRAME.registerComponent('proxy-event', {
   schema: {
     event: { default: '' },
@@ -7,8 +9,9 @@ AFRAME.registerComponent('proxy-event', {
 
   init: function () {
     var dst = this.data.dst || this.el;
-    this.el.sceneEl.addEventListener(this.data.event, function (event) {
-      dst.emit(this.data.event, event, this.data.bubbles);
-    }.bind(this));
-  }
+    this.el.sceneEl.addEventListener(this.data.event, (event) => {
+      dst.emit(this.data.event as keyof EntityEvents, event, this.data.bubbles);
+    });
+  },
+
 });

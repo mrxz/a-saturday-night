@@ -1,5 +1,7 @@
 /* global AFRAME */
 
+import { EntityEvents } from "aframe";
+
 /**
 * Handles events coming from the hand-controls.
 * Determines if the entity is grabbed or released.
@@ -28,13 +30,13 @@ AFRAME.registerComponent('avatar-selector', {
     //el.removeEventListener('pointdown', this.selectAvatar);
   },
 
-  selectAvatar: function (evt) {
+  selectAvatar: function (_evt: Event) {
     if (!this.hitEl) { return; }
     this.el.sceneEl.setAttribute('game-state', 'selectedAvatar', this.hitEl);
     this.pause();
   },
 
-  onHit: function (evt) {
+  onHit: function (evt: EntityEvents['hit']) {
     if (!evt.detail.el) { return; }
     if (this.hitEl) { this.hitEl.setAttribute('scale', '1 1 1'); }
     this.hitEl = evt.detail.el;

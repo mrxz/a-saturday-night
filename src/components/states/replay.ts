@@ -1,7 +1,8 @@
+import { Components } from 'aframe';
 import { capabilities } from '../../utils';
 const audioCapabilities = capabilities.audio;
 
-AFRAME.registerComponent('replay', {
+const ReplayComponent = AFRAME.registerComponent('replay', {
   init: function () {
     this.onEnterVR = this.onEnterVR.bind(this);
   },
@@ -15,22 +16,22 @@ AFRAME.registerComponent('replay', {
   },
 
   onEnterVR: function () {
-    var position = this.el.isMobile ? '0 1.6 0.80' : '0 0 1.5';
-    this.el.querySelector('#spectatorCameraRig').setAttribute('position', position);
+    var position = this.el.sceneEl.isMobile ? '0 1.6 0.80' : '0 0 1.5';
+    this.el.querySelector('#spectatorCameraRig')!.setAttribute('position', position);
   },
 
-  loadDance: function (data) {
+  loadDance: function (data: any) {
     var self = this;
     var el = this.el;
-    var selectedAvatarEl = this.selectedAvatarEl = document.getElementById(data.avatar);
-    var selectedAvatarHeadEl = selectedAvatarEl.querySelector('.head');
-    var selectedAvatarRightHandEl = selectedAvatarEl.querySelector('.rightHand');
-    var selectedAvatarLeftHandEl = selectedAvatarEl.querySelector('.leftHand');
-    var avatarHeadEl = document.getElementById('avatarHead');
-    var rightHandEl = document.getElementById('rightHand');
-    var leftHandEl = document.getElementById('leftHand');
+    var selectedAvatarEl = this.selectedAvatarEl = document.getElementById(data.avatar)!;
+    var selectedAvatarHeadEl = selectedAvatarEl.querySelector('.head')!;
+    var selectedAvatarRightHandEl = selectedAvatarEl.querySelector('.rightHand')!;
+    var selectedAvatarLeftHandEl = selectedAvatarEl.querySelector('.leftHand')!;
+    var avatarHeadEl = document.getElementById('avatarHead')!;
+    var rightHandEl = document.getElementById('rightHand')!;
+    var leftHandEl = document.getElementById('leftHand')!;
     var spectatorPositionY = el.is('vr-mode') ? 0 : 1.6;
-    var spectatorPosition = this.el.isMobile ?
+    var spectatorPosition = this.el.sceneEl.isMobile ?
       '0 ' + spectatorPositionY + ' 0.80' : '0 ' + spectatorPositionY + ' 1.5';
     this.cameraRig = document.getElementById('cameraRig');
     if (!el.hasLoaded) {
@@ -41,9 +42,11 @@ AFRAME.registerComponent('replay', {
     }
 
     el.sceneEl.setAttribute('game-state', 'selectedAvatar', selectedAvatarEl);
-    avatarHeadEl.setAttribute('gltf-model', selectedAvatarHeadEl.getAttribute('gltf-model'));
+    // FIXME
+    avatarHeadEl.setAttribute('gltf-model', selectedAvatarHeadEl.getAttribute('gltf-model')!);
     // If model has not loaded we hide the avatar until it loads
-    if (!avatarHeadEl.components['gltf-model'].model) {
+    // @ts-ignore
+    if (!avatarHeadEl.components['gltf-model']?.model) {
       avatarHeadEl.setAttribute('visible', false);
       rightHandEl.setAttribute('visible', false);
       leftHandEl.setAttribute('visible', false);
@@ -58,21 +61,24 @@ AFRAME.registerComponent('replay', {
       leftHandEl.setAttribute('visible', true);
     }
     this.cameraRig.setAttribute('rotation', '0 180 0');
-    rightHandEl.setAttribute('gltf-model', selectedAvatarRightHandEl.getAttribute('gltf-model'));
-    leftHandEl.setAttribute('gltf-model', selectedAvatarLeftHandEl.getAttribute('gltf-model'));
+    // FIXME
+    rightHandEl.setAttribute('gltf-model', selectedAvatarRightHandEl.getAttribute('gltf-model')!);
+    leftHandEl.setAttribute('gltf-model', selectedAvatarLeftHandEl.getAttribute('gltf-model')!);
 
-    document.getElementById('backText').setAttribute('visible', false);
+    document.getElementById('backText')!.setAttribute('visible', false);
 
-    el.setAttribute('avatar-replayer', {
+    el.setAttribute('avatar-replayer' as keyof Components, {
       spectatorMode: true,
       spectatorPosition: spectatorPosition,
-      loop: true
+      loop: true,
     });
 
-    document.getElementById('floor').setAttribute('discofloor', {pattern: data.avatar});
+    //@ts-ignore
+    document.getElementById('floor')!.setAttribute('discofloor', {pattern: data.avatar});
 
     var soundSrc = '#' + data.avatar + (audioCapabilities.opus ? 'ogg' : 'mp3');
     el.sceneEl.setAttribute('game-state', 'dancingTime', document.querySelector(soundSrc).getAttribute('duration'));
+    //@ts-ignore
     el.components['avatar-replayer'].startReplaying(data.recording);
     document.querySelector('#room [sound]').setAttribute('sound', {
       src: soundSrc,
@@ -89,22 +95,22 @@ AFRAME.registerComponent('replay', {
     var spectatorCameraRigEl;
     if (this.insertedHands) { return; }
     this.onTriggerDown = this.onTriggerDown.bind(this);
-    spectatorCameraRigEl = this.el.querySelector('#spectatorCameraRig');
+    spectatorCameraRigEl = this.el.querySelector('#spectatorCameraRig')!;
     leftSelectionHandEl = this.leftSelectionHandEl = document.createElement('a-entity');
     rightSelectionHandEl = this.rightSelectionHandEl = document.createElement('a-entity');
     leftSelectionHandEl.id = 'leftSelectionHand';
     rightSelectionHandEl.id = 'rightSelectionHand';
-    leftSelectionHandEl.setAttribute('vive-controls', 'hand: left');
-    rightSelectionHandEl.setAttribute('vive-controls', 'hand: right');
-    leftSelectionHandEl.setAttribute('oculus-touch-controls', 'hand: left');
-    rightSelectionHandEl.setAttribute('oculus-touch-controls', 'hand: right');
+    leftSelectionHandEl.setAttribute('vive-controls', {hand: 'left'});
+    rightSelectionHandEl.setAttribute('vive-controls', {hand: 'right'});
+    leftSelectionHandEl.setAttribute('oculus-touch-controls', {hand: 'left'});
+    rightSelectionHandEl.setAttribute('oculus-touch-controls', {hand: 'right'});
     spectatorCameraRigEl.appendChild(leftSelectionHandEl);
     spectatorCameraRigEl.appendChild(rightSelectionHandEl);
     leftSelectionHandEl.addEventListener('triggerdown', this.onTriggerDown);
     rightSelectionHandEl.addEventListener('triggerdown', this.onTriggerDown);
 
     var textProps = {
-      font : 'assets/asaturdaynight.fnt',
+      font : 'assets/asaturdaynight.txt',
       color: '#fcff79',
       align: 'right',
       anchor:'right',
@@ -143,8 +149,10 @@ AFRAME.registerComponent('replay', {
 
   remove: function () {
     var i;
-    var animationEls = this.el.querySelectorAll('[begin=dancing]');
-    var spectatorCameraRigEl = this.el.querySelector('#spectatorCameraRig');
+    //@ts-ignore
+    var animationEls = this.el.querySelectorAll('[begin=dancing]') as Entity[];
+    var spectatorCameraRigEl = this.el.querySelector('#spectatorCameraRig')!;
+    //@ts-ignore
     document.querySelector('#room [sound]').components.sound.stopSound();
     this.el.removeAttribute('avatar-replayer');
     this.cameraRig.setAttribute('rotation', '0 0 0');
@@ -159,3 +167,9 @@ AFRAME.registerComponent('replay', {
     spectatorCameraRigEl.removeChild(this.rightSelectionHandEl);
   }
 });
+
+declare module "aframe" {
+  export interface Components {
+    "replay": InstanceType<typeof ReplayComponent>
+  }
+}

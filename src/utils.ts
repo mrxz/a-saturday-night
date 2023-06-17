@@ -2,9 +2,9 @@ export function getUrlParams () {
   var match;
   var pl = /\+/g;  // Regex for replacing addition symbol with a space
   var search = /([^&=]+)=?([^&]*)/g;
-  var decode = function (s) { return decodeURIComponent(s.replace(pl, ' ')); };
+  var decode = function (s: string) { return decodeURIComponent(s.replace(pl, ' ')); };
   var query = window.location.search.substring(1);
-  var urlParams = {};
+  var urlParams: any = {};
 
   match = search.exec(query);
   while (match) {
@@ -14,7 +14,7 @@ export function getUrlParams () {
   return urlParams;
 }
 
-var canPlayType = function (el, mimeType) {
+var canPlayType = function (el: any, mimeType: string) {
   if (!el || !el.canPlayType || !mimeType) {
     return false;
   }
@@ -30,21 +30,27 @@ var getAudioCapabilities = (function (el) {
     var support = {};
 
     try {
+      //@ts-ignore
       if (!el.canPlayType) {
         return Boolean(false);
       }
 
       support = Boolean(true);
 
+      //@ts-ignore
       support.ogg = canPlayType(el, 'audio/ogg; codecs="vorbis"');
+      //@ts-ignore
       support.mp3 = canPlayType(el, 'audio/mpeg; codecs="mp3"');
+      //@ts-ignore
       support.opus = canPlayType(el, 'audio/ogg; codecs="opus"') ||
                      canPlayType(el, 'audio/webm; codecs="opus"');
 
       // Supported mime-types:
       // - https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
       // - https://bit.ly/iphoneoscodecs
+      //@ts-ignore
       support.wav = canPlayType(el, 'audio/wav; codecs="1"');
+      //@ts-ignore
       support.m4a = canPlayType(el, 'audio/x-m4a;') ||
                     canPlayType(el, 'audio/aac;');
     } catch (e) {
@@ -57,6 +63,7 @@ var getAudioCapabilities = (function (el) {
 // TODO: If need, adapt full functionality from `Modernizr` source: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/video.js
 var getVideoCapabilities = (function (el) {
   return function () {
+    //@ts-ignore
     return Boolean(!!el.canPlayType);
   };
 })(document.createElement('video'));

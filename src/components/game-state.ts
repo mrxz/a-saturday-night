@@ -1,14 +1,16 @@
-/* global AFRAME */
+import * as AFRAME from "aframe";
 
 /**
 * Handles game states
 */
-AFRAME.registerComponent('game-state', {
+const GameStateComponent = AFRAME.registerComponent('game-state', {
   schema: {
     selectedAvatar: {type: 'selector'},
     countdownTime: {default: 3},
     dancingTime: {default: 15},
-    state: {default: 'instructions', oneOf: ['instructions', 'replay', 'avatar-selection', 'countdown', 'dancing', 'collect-url']}
+    // FIXME:
+    state: {default: 'instructions'}
+    //state: {default: 'instructions', oneOf: ['instructions', 'replay', 'avatar-selection', 'countdown', 'dancing', 'collect-url']}
   },
 
   init: function () {
@@ -60,17 +62,29 @@ AFRAME.registerComponent('game-state', {
     }
   },
 
-  setState: function(state) {
+  setState: function(state: string) {
     var el = this.el;
-    var states = this.schema.state.oneOf;
+    // FIXME:
+    //var states = this.schema.state.oneOf;
+    var states = ['instructions', 'replay', 'avatar-selection', 'countdown', 'dancing', 'collect-url'];
     if (this.updatingState) { return; }
     if (states.indexOf(state) === -1) {
       console.log('Unknown state: ' + state);
     }
     // Remove all states
-    states.forEach(function (state) {
+    states.forEach(function (state: string) {
       el.removeAttribute(state);
     });
-    el.setAttribute(state, '');
+    // @ts-ignore
+    el.setAttribute(state, {});
   }
 });
+
+declare module "aframe" {
+  export interface EntityEvents {
+    "dancing": AFRAME.DetailEvent<{}>;
+  }
+  export interface Components {
+    "game-state": InstanceType<typeof GameStateComponent>
+  }
+}

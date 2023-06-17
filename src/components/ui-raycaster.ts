@@ -1,4 +1,7 @@
-/* globals AFRAME THREE */
+import * as AFRAME from "aframe";
+import { DetailEvent, Entity } from "aframe";
+import { assertComponent, strict } from "aframe-typescript";
+
 /**
  * Raycaster component.
  *
@@ -11,7 +14,13 @@
  * @member {number} prevCheckTime - Previous time intersection was checked. To help interval.
  * @member {object} raycaster - three.js Raycaster.
  */
-AFRAME.registerComponent('ui-raycaster', {
+const UiRaycasterComponent = AFRAME.registerComponent('ui-raycaster', strict<{
+  direction: THREE.Vector3,
+  intersectedEls: Entity[],
+  objects: THREE.Object3D[] | null,
+  prevCheckTime?: number,
+  raycaster: THREE.Raycaster,
+}>().override<'updateOriginDirection'>().component({
   schema: {
     far: {default: Infinity}, // Infinity.
     interval: {default: 100},
@@ -65,7 +74,8 @@ AFRAME.registerComponent('ui-raycaster', {
 
     // Push meshes onto list of objects to intersect.
     if (data.objects) {
-      objectEls = this.el.sceneEl.querySelectorAll(data.objects);
+      // @ts-ignore
+      objectEls = this.el.sceneEl.querySelectorAll(data.objects) as Entity[];
       this.objects = [];
       for (i = 0; i < objectEls.length; i++) {
         this.objects.push(objectEls[i].object3D);
@@ -83,7 +93,7 @@ AFRAME.registerComponent('ui-raycaster', {
   tick: function (time) {
     var el = this.el;
     var data = this.data;
-    var intersectedEls;
+    var intersectedEls: Entity[];
     var intersections;
     var prevCheckTime = this.prevCheckTime;
     var prevIntersectedEls;
@@ -96,7 +106,7 @@ AFRAME.registerComponent('ui-raycaster', {
 
     // Raycast.
     this.updateOriginDirection();
-    intersections = this.raycaster.intersectObjects(this.objects, data.recursive);
+    intersections = this.raycaster.intersectObjects(this.objects!, data.recursive);
 
     // Only keep intersections against objects that have a reference to an entity.
     intersections = intersections.filter(function hasEl (intersection) {
@@ -139,7 +149,8 @@ AFRAME.registerComponent('ui-raycaster', {
     var scaleDummy = new THREE.Vector3();
 
     // Closure to make quaternion/vector3 objects private.
-    return function updateOriginDirection () {
+    return function updateOriginDirection (this: any) {
+      assertComponent<InstanceType<typeof UiRaycasterComponent>>(this);
       var el = this.el;
       var direction = this.direction;
       var object3D = el.object3D;
@@ -156,4 +167,26 @@ AFRAME.registerComponent('ui-raycaster', {
       this.raycaster.set(originVec3, direction);
     };
   })()
-});
+}));
+
+declare module "aframe" {
+  export interface Components {
+    "ui-raycaster": InstanceType<typeof UiRaycasterComponent>
+  }
+  export interface EntityEvents {
+    'raycaster-intersected': DetailEvent<{
+      el: Entity,
+      intersection: THREE.Intersection<THREE.Object3D>
+    }>;
+    'raycaster-intersection': DetailEvent<{
+      els: Entity[],
+      intersections: THREE.Intersection<THREE.Object3D>[]
+    }>;
+    'raycaster-intersected-cleared': DetailEvent<{
+      el: Entity;
+    }>;
+    'raycaster-intersection-cleared': DetailEvent<{
+      el: Entity;
+    }>;
+  }
+}

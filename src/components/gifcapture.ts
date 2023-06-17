@@ -1,4 +1,6 @@
-/* global AFRAME, THREE */
+/* global AFRAME, THREE, CCapture */
+
+import { DetailEvent, Scene } from "aframe";
 
 AFRAME.registerComponent('gifcapture', {
 
@@ -15,7 +17,8 @@ AFRAME.registerComponent('gifcapture', {
     this.start();
   },
   start: function () {
-    var el = this.el;
+    var el = this.el.sceneEl;
+    // @ts-ignore
     this.capturer = new CCapture({
       format: 'gif',
       framerate: this.data.fps,
@@ -40,13 +43,13 @@ AFRAME.registerComponent('gifcapture', {
   },
 
   startCapture: function () {
-    var el = this.el;
-    var cameraRigEl = el.querySelector('#spectatorCameraRig');
-    this.oldSize = this.el.sceneEl.renderer.getSize();
+    var el = this.el.sceneEl;
+    var cameraRigEl = el.querySelector('#spectatorCameraRig')!;
+    this.oldSize = this.el.sceneEl.renderer.getSize(new THREE.Vector2());
     this.oldRatio = this.oldSize.height / this.oldSize.width;
     if (el.is('vr-mode')) {
       this.el.addEventListener('exit-vr', this.startCapture);
-      this.el.exitVR();
+      this.el.sceneEl.exitVR();
       return;
     }
     // save camera position
@@ -65,7 +68,7 @@ AFRAME.registerComponent('gifcapture', {
 
   stopCapture: function () {
     var el = this.el;
-    var cameraRigEl = el.querySelector('#spectatorCameraRig');
+    var cameraRigEl = el.querySelector('#spectatorCameraRig')!;
     this.capturer.stop();
     if (this.data.saveToFile) {
       this.capturer.save();
@@ -73,7 +76,7 @@ AFRAME.registerComponent('gifcapture', {
     }
     else {
       var self = this;
-      this.capturer.save(function (blob) { self.el.emit('gifdone', blob); });
+      this.capturer.save(function (blob: Blob) { self.el.emit('gifdone', blob); });
     }
     el.sceneEl.renderer.setSize(this.oldSize.width, this.oldSize.height);
     el.sceneEl.effect.render = this.effectRender;
@@ -81,7 +84,7 @@ AFRAME.registerComponent('gifcapture', {
     cameraRigEl.setAttribute('position', this.spectatorCameraRigPosition);
   },
 
-  render: function (scene, camera) {
+  render: function (scene: Scene, camera: THREE.Camera) {
     this.effectRender(scene, camera);
     this.capturer.capture(this.el.sceneEl.canvas);
     this.frame++;
@@ -91,3 +94,11 @@ AFRAME.registerComponent('gifcapture', {
   }
 
 });
+
+declare module "aframe" {
+  export interface EntityEvents {
+    "start": DetailEvent<{}>;
+    "done": DetailEvent<{}>;
+    "gifdone": DetailEvent<{}>;
+  }
+}

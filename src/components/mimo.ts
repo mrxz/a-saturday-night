@@ -1,5 +1,10 @@
+import { Entity } from 'aframe';
+import { strict } from 'aframe-typescript';
+
 /* globals AFRAME THREE */
-AFRAME.registerComponent('mimo', {
+const MimoComponent = AFRAME.registerComponent('mimo', strict<{
+  mirroredEl: Entity|null
+}>().component({
   schema: {type: 'selector'},
 
   update: function () {
@@ -26,4 +31,10 @@ AFRAME.registerComponent('mimo', {
       z: -rotation.z
     });
   }
-});
+}));
+
+declare module "aframe" {
+  export interface Components {
+    "mimo": InstanceType<typeof MimoComponent>
+  }
+}

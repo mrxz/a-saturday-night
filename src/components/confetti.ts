@@ -1,5 +1,7 @@
 /* global AFRAME, THREE */
 
+import { Entity } from "aframe";
+
 /**
  * Let's party
  */
@@ -19,17 +21,17 @@ AFRAME.registerComponent('confetti', {
     var confetiNum = data.waveSize * data.wavesNumber;
     var i;
     var j;
-    var confettiEls = this.confettiEls = [];
+    var confettiEls = this.confettiEls = [] as Entity[];
     var color;
-    var conffetiEl;
+    var confettiEl;
     var colors = ['red', 'blue', 'green'];
     var redConfettiEl = this.redConfettiEl = document.createElement('a-entity');
     var blueConfettiEl = this.blueConfettiEl = document.createElement('a-entity');
     var greenConfettiEl = this.greenConfettiEl = document.createElement('a-entity');
     var colorEls = {};
-    redConfettiEl.setAttribute('geometry', 'buffer: false');
-    blueConfettiEl.setAttribute('geometry', 'buffer: false');
-    greenConfettiEl.setAttribute('geometry', 'buffer: false');
+    redConfettiEl.setAttribute('geometry', {buffer: false});
+    blueConfettiEl.setAttribute('geometry', {buffer: false});
+    greenConfettiEl.setAttribute('geometry', {buffer: false});
     redConfettiEl.id = 'redConfetti';
     blueConfettiEl.id = 'blueConfetti';
     greenConfettiEl.id = 'greenConfetti';
@@ -56,7 +58,7 @@ AFRAME.registerComponent('confetti', {
           width: 0.005,
           height: 0.015,
           skipCache: true,
-          mergeTo: '#' + color + 'Confetti'
+          //mergeTo: '#' + color + 'Confetti'
         });
         confettiEl.setAttribute('position', {
           x: Math.random() * data.areaWidth - data.areaWidth / 2,
@@ -68,7 +70,7 @@ AFRAME.registerComponent('confetti', {
       }
     }
     this.flyingConfettiEls = [];
-    this.waveInterval = setInterval(this.createConfettiWave.bind(this), data.waveDelay);
+    this.waveInterval = setInterval(this.createConfettiWave.bind(this), 0/*data.waveDelay*/);
   },
 
   createConfettiWave: function () {

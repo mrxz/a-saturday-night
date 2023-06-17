@@ -1,9 +1,11 @@
 /* global AFRAME, THREE */
 
+import { DetailEvent } from "aframe";
+
 /**
  * Animation of the floor tiles
  */
-AFRAME.registerComponent('discofloor', {
+const DiscofloorComponent = AFRAME.registerComponent('discofloor', {
   schema: {
     pattern: {default: 'idle', oneOf: ['idle', '3', '2', '1', 'avatar1', 'avatar2', 'avatar3', 'avatar4']}
   },
@@ -21,6 +23,7 @@ AFRAME.registerComponent('discofloor', {
       'avatar3': 1000,
       'avatar4': 600
     }
+    //@ts-ignore
     this.tickTime = 1000 * 60 / this.bpms[this.data.pattern];
 
     this.pat3 = '0011111001111110011000000111100001111000011000000111111000111110';
@@ -28,16 +31,18 @@ AFRAME.registerComponent('discofloor', {
     this.pat1 = '0011000000111000001111000011011000110000001100000011000000110000';
     //this.pat0 = '0011110001100110011001100110011001100110011001100110011000111100';
 
+    // @ts-ignore
     this.el.addEventListener('model-loaded', this.initTiles.bind(this));
   },
-  initTiles: function (evt) {
+  initTiles: function (evt: DetailEvent<{model: THREE.Object3D}>) {
     var meshes = evt.detail.model.children[0].children;
     for (var i = 0; i < meshes.length; i++) {
       this.tiles[i] = meshes[i];
     }
-    this.tiles.sort(function(a, b) { a.name > b.name ? 1 : -1 });
+    this.tiles.sort(function(a: THREE.Mesh, b: THREE.Mesh) { a.name > b.name ? 1 : -1 });
   },
   update: function (oldData) {
+    //@ts-ignore
     this.tickTime = 1000 * 60 / this.bpms[this.data.pattern];
     this.myTick = null;
     this.step = 0;
@@ -63,6 +68,7 @@ AFRAME.registerComponent('discofloor', {
       var dx = x - center;
       var dy = y - center;
       var dist = dx * dx + dy * dy;
+      //@ts-ignore
       switch(this.data.pattern) {
         case 'idle':
             visible = (x + this.step) % 2 == 0;
@@ -96,3 +102,9 @@ AFRAME.registerComponent('discofloor', {
     }
   }
 });
+
+declare module "aframe" {
+  export interface Components {
+    "discofloor": InstanceType<typeof DiscofloorComponent>
+  }
+}

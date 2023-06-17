@@ -1,13 +1,15 @@
+import { Entity, EntityEvents } from 'aframe';
 import { capabilities } from '../../utils';
+import { assertComponent, lax } from 'aframe-typescript';
 const audioCapabilities = capabilities.audio;
 
-AFRAME.registerComponent('avatar-selection', {
+const AvatarSelectionComponent = AFRAME.registerComponent('avatar-selection', lax().override<'onIntersection'>().component({
   init: function () {
     var el = this.el;
-    var avatarSelectionEl = this.avatarSelectionEl = this.el.querySelector('#avatarSelection');
-    var avatarHeadEl = document.getElementById('avatarHead');
-    var rightHandEl = document.getElementById('rightHand');
-    var leftHandEl = document.getElementById('leftHand');
+    var avatarSelectionEl = this.avatarSelectionEl = this.el.querySelector('#avatarSelection')!;
+    var avatarHeadEl = document.getElementById('avatarHead')!;
+    var rightHandEl = document.getElementById('rightHand')!;
+    var leftHandEl = document.getElementById('leftHand')!;
     this.avatarEls = this.el.querySelectorAll('.head');
     avatarHeadEl.setAttribute('visible', false);
     avatarSelectionEl.setAttribute('visible', true);
@@ -15,13 +17,15 @@ AFRAME.registerComponent('avatar-selection', {
     this.onHover = this.onHover.bind(this);
     rightHandEl.setAttribute('visible', false);
     leftHandEl.setAttribute('visible', false);
-    window.addEventListener('hit', this.onHover);
+    // FIXME ?
+    (this.el.sceneEl as Entity).addEventListener('hit', this.onHover);
     window.addEventListener('keydown', this.onKeyDown);
-    document.getElementById('backText').setAttribute('visible', true);
+    document.getElementById('backText')!.setAttribute('visible', true);
     for (var i = 1; i <= 4; i++) {
-      document.getElementById('spot' + i).setAttribute('scale', '0 0 0');
+      document.getElementById('spot' + i)!.object3D.scale.set(0, 0, 0);
     }
     document.querySelector('#room [sound]').setAttribute('sound', {
+      //@ts-ignore
       src: audioCapabilities.opus ? '#menuogg' : '#menump3',
       volume: 0.5,
       autoplay: true,
@@ -29,13 +33,15 @@ AFRAME.registerComponent('avatar-selection', {
     });
     el.setAttribute('game-state', 'selectedAvatar', null);
     this.insertSelectionHands();
-    el.querySelector('#floor').setAttribute('discofloor', {pattern: 'idle'});
+    //@ts-ignore
+    el.querySelector('#floor')!.setAttribute('discofloor', {pattern: 'idle'});
   },
 
   insertSelectionHands: function () {
     var leftSelectionHandEl;
     var rightSelectionHandEl;
-    var cameraRigEl = this.cameraRigEl = this.el.camera.el.parentEl;
+    //@ts-ignore
+    var cameraRigEl = this.cameraRigEl = this.el.sceneEl.camera.el.parentEl;
     this.onTriggerDown = this.onTriggerDown.bind(this);
     this.onIntersection = this.onIntersection.bind(this);
     this.onIntersectionCleared = this.onIntersectionCleared.bind(this);
@@ -45,14 +51,14 @@ AFRAME.registerComponent('avatar-selection', {
     var rightRayEl = this.rightRayEl = document.createElement('a-entity');
     leftSelectionHandEl.id = 'leftSelectionHand';
     rightSelectionHandEl.id = 'rightSelectionHand';
-    leftSelectionHandEl.setAttribute('vive-controls', 'hand: left');
-    rightSelectionHandEl.setAttribute('vive-controls', 'hand: right');
-    leftSelectionHandEl.setAttribute('oculus-touch-controls', 'hand: left');
-    rightSelectionHandEl.setAttribute('oculus-touch-controls', 'hand: right');
+    leftSelectionHandEl.setAttribute('vive-controls', {hand: 'left'});
+    rightSelectionHandEl.setAttribute('vive-controls', {hand: 'right'});
+    leftSelectionHandEl.setAttribute('oculus-touch-controls', {hand: 'left'});
+    rightSelectionHandEl.setAttribute('oculus-touch-controls', {hand: 'right'});
 
-    leftRayEl.setAttribute('line', 'end: 0 0 -5');
+    leftRayEl.setAttribute('line', {end: {x: 0, y: 0, z: -5}});
     //leftRayEl.setAttribute('visible', false);
-    rightRayEl.setAttribute('line', 'end: 0 0 -5');
+    rightRayEl.setAttribute('line', {end: {x: 0, y: 0, z: -5}});
     //rightRayEl.setAttribute('visible', false);
     // Raycaster setup
     rightSelectionHandEl.setAttribute('ui-raycaster', {
@@ -84,43 +90,44 @@ AFRAME.registerComponent('avatar-selection', {
     this.selectAvatar(this.hoveredAvatarEl.parentEl);
   },
 
-  onKeyDown: function (event) {
+  onKeyDown: function (event: KeyboardEvent) {
     var code = event.keyCode;
     if (code >= 49 && code <= 52) {
       this.selectAvatar(this.avatarEls[code - 49].parentEl);
     }
   },
 
-  selectAvatar: function (avatarEl) {
+  selectAvatar: function (avatarEl: Entity) {
     var el = this.el;
     var selectedAvatarEl = this.selectedAvatarEl = avatarEl;
-    var leftHandEl = el.querySelector('#leftHand');
-    var rightHandEl = el.querySelector('#rightHand');
+    var leftHandEl = el.querySelector('#leftHand')! as Entity;
+    var rightHandEl = el.querySelector('#rightHand')! as Entity;
     el.setAttribute('game-state', 'selectedAvatar', this.selectedAvatarEl);
 
     leftHandEl.setAttribute('position', {x: 0, y: 0, z: 0});
     leftHandEl.setAttribute('rotation', {x: 0, y: 0, z: 0});
     leftHandEl.setAttribute('gltf-model',
-                             selectedAvatarEl.querySelector('.leftHand').getAttribute('gltf-model'));
+                             selectedAvatarEl.querySelector('.leftHand')!.getAttribute('gltf-model')!);
 
     rightHandEl.setAttribute('position', {x: 0, y: 0, z: 0});
     rightHandEl.setAttribute('rotation', {x: 0, y: 0, z: 0});
     rightHandEl.setAttribute('gltf-model',
-                             selectedAvatarEl.querySelector('.rightHand').getAttribute('gltf-model'));
+                             selectedAvatarEl.querySelector('.rightHand')!.getAttribute('gltf-model')!);
     this.removeSelectionHands();
   },
 
-  onIntersectionCleared: function (evt) {
-    var rayEl = evt.target.querySelector('[line]');
-    rayEl.setAttribute('line', {end: '0 0 -5'});
+  onIntersectionCleared: function (evt: EntityEvents['raycaster-intersection-cleared']) {
+    var rayEl = evt.target.querySelector('[line]') as Entity;
+    rayEl.setAttribute('line', {end: { x: 0, y: 0, z: -5 }});
     this.highlightAvatar();
   },
 
   onIntersection: (function () {
     var position = new THREE.Vector3();
-    return function (evt) {
+    return function (this: any, evt: EntityEvents['raycaster-intersection']) {
+      assertComponent<InstanceType<typeof AvatarSelectionComponent>>(this);
       var avatarEl = evt.detail.els[0];
-      var rayEl = evt.target.querySelector('[line]');
+      var rayEl = evt.target.querySelector('[line]')! as Entity;
       position.copy(evt.detail.intersections[0].point);
       rayEl.object3D.worldToLocal(position);
       rayEl.setAttribute('line', {end: position});
@@ -145,14 +152,14 @@ AFRAME.registerComponent('avatar-selection', {
     leftSelectionHandEl.removeEventListener('raycaster-intersection', this.onIntersection);
     leftSelectionHandEl.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
     window.removeEventListener('keydown', this.onKeyDown);
-    window.removeEventListener('hit', this.onHover);
+    (this.el.sceneEl as Entity).removeEventListener('hit', this.onHover);
   },
 
-  onHover: function (event) {
+  onHover: function (event: EntityEvents['hit']) {
     this.highlightAvatar(event.detail.el === null ? null : event.target);
   },
 
-  highlightAvatar: function (el) {
+  highlightAvatar: function (el?: Entity|null) {
     if ((el && el.className !== 'head') || el === this.hoveredAvatarEl) { return; }
     if (el) { el.setAttribute('highlighter', {active: true}); }
     if (this.hoveredAvatarEl) { this.hoveredAvatarEl.setAttribute('highlighter', {active: false}); }
@@ -162,10 +169,11 @@ AFRAME.registerComponent('avatar-selection', {
   remove: function () {
     this.avatarSelectionEl.setAttribute('visible', false);
     window.removeEventListener('keydown', this.onKeyDown);
-    window.removeEventListener('hit', this.onHover);
-    document.getElementById('backText').setAttribute('visible', false);
+    (this.el.sceneEl as Entity).removeEventListener('hit', this.onHover);
+    document.getElementById('backText')!.setAttribute('visible', false);
     var soundEl = document.querySelector('#room [sound]');
-    soundEl.components.sound.pauseSound();
+    //@ts-ignore
+    soundEl.components.sound!.pauseSound();
     soundEl.setAttribute('sound', 'volume', 1);
   }
-});
+}));

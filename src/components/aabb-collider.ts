@@ -1,4 +1,6 @@
-/* global AFRAME, THREE */
+import * as AFRAME from 'aframe';
+import { DetailEvent, Entity } from 'aframe';
+import { assertComponent, lax } from 'aframe-typescript';
 
 /**
  * Implement AABB collision detection for entities with a mesh.
@@ -9,7 +11,7 @@
  * @property {string} state - State to set on collided entities.
  *
  */
-AFRAME.registerComponent('aabb-collider', {
+const AabbColliderComponent = AFRAME.registerComponent('aabb-collider', lax().override<'tick'>().component({
   schema: {
     objects: {default: ''},
     state: {default: 'collided'}
@@ -42,8 +44,9 @@ AFRAME.registerComponent('aabb-collider', {
 
   tick: (function () {
     var boundingBox = new THREE.Box3();
-    return function () {
-      var collisions = [];
+    return function (this: any) {
+      assertComponent<InstanceType<typeof AabbColliderComponent>>(this);
+      var collisions: Entity[] = [];
       var el = this.el;
       var mesh = el.getObject3D('mesh');
       var self = this;
@@ -59,16 +62,16 @@ AFRAME.registerComponent('aabb-collider', {
       // No collisions.
       if (collisions.length === 0) { self.el.emit('hit', {el: null}); }
       // Updated the state of the elements that are not intersected anymore.
-      this.collisions.filter(function (el) {
+      this.collisions.filter(function (el: Entity) {
         return collisions.indexOf(el) === -1;
-      }).forEach(function removeState (el) {
+      }).forEach(function removeState (el: Entity) {
         el.removeState(self.data.state);
       });
       // Store new collisions
       this.collisions = collisions;
 
       // AABB collision detection
-      function intersect (el) {
+      function intersect (el: Entity) {
         var intersected;
         var mesh = el.getObject3D('mesh');
         var elMin;
@@ -88,7 +91,7 @@ AFRAME.registerComponent('aabb-collider', {
         collisions.push(el);
       }
 
-      function handleHit (hitEl) {
+      function handleHit (hitEl: Entity) {
         hitEl.emit('hit');
         hitEl.addState(self.data.state);
         self.el.emit('hit', {el: hitEl});
@@ -101,4 +104,10 @@ AFRAME.registerComponent('aabb-collider', {
       }
     };
   })()
-});
+}));
+
+declare module "aframe" {
+  export interface EntityEvents {
+    "hit": DetailEvent<{el: Entity|null}>;
+  }
+}

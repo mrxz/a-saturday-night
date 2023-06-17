@@ -1,9 +1,11 @@
+import { Entity } from "aframe";
+
 AFRAME.registerComponent('countdown', {
   init: function () {
-    var leftHandEl = this.el.querySelector('#leftHand');
-    var rightHandEl = this.el.querySelector('#rightHand');
-    var avatarHeadEl = this.el.querySelector('#avatarHead');
-    this.countdownTime = this.el.getAttribute('game-state').countdownTime;
+    var leftHandEl = this.el.querySelector('#leftHand')! as Entity;
+    var rightHandEl = this.el.querySelector('#rightHand')! as Entity;
+    var avatarHeadEl = this.el.querySelector('#avatarHead')! as Entity;
+    this.countdownTime = this.el.getAttribute('game-state')!.countdownTime;
     this.countdown = this.countdown.bind(this);
     this.interval = window.setInterval(this.countdown, 1000);
     this.floor = this.el.querySelector('#floor');
@@ -11,7 +13,7 @@ AFRAME.registerComponent('countdown', {
     var textElements = this.textElements = document.querySelectorAll('#centeredText, #counter0Text, #counter1Text');
 
     for (var i = 0; i < textElements.length; i++) {
-      var textElement = textElements[i];
+      var textElement = textElements[i] as Entity;
       textElement.setAttribute('visible', true);
       textElement.setAttribute('text', {value: ''});
     }

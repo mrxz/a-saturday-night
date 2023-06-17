@@ -12,7 +12,7 @@
     <script src="vendor/gif.js"></script>
     <script src="vendor/download.js"></script>
     <script src="vendor/CCapture.min.js"></script>
-    <script type="module" src="src/index.js"></script>
+    <script type="module" src="src/index.ts"></script>
 
     <link rel="manifest" href="manifest.webmanifest">
 
@@ -126,18 +126,18 @@
         <a-entity id="rightHand" visible="false"></a-entity>
       </a-entity>
       <!-- Texts -->
-      <a-entity id="counter0Text" visible="false" position="0.87 2.18 -2.42" rotation="23.78 -27.40 0" text="font: assets/asaturdaynight.fnt; color: #fffd6a; align:center;width:3.8"></a-entity>
-      <a-entity id="counter1Text" visible="false" position="-1.66 2.18 2.16" rotation="23.78 147.24 0" text="font: assets/asaturdaynight.fnt; color: #fffd6a; align:center;width:3.8"></a-entity>
-      <a-entity id="counter0" visible="false" position="0.87 2.18 -2.42" rotation="23.78 -27.40 0" text="font: assets/asaturdaynight.fnt; color: #fffd6a; align:center;width:7.4"></a-entity>
-      <a-entity id="counter1" visible="false" position="-1.66 2.18 2.16" rotation="23.78 147.24 0" text="font: assets/asaturdaynight.fnt; color: #fffd6a; align:center;width:7.4"></a-entity>
-      <a-entity id="centeredText" text="font: assets/asaturdaynight.fnt; align: center; opacity: 1; width: 6.22;color:#fffdb3;" visible="false" position="0 1.4 -1"></a-entity>
+      <a-entity id="counter0Text" visible="false" position="0.87 2.18 -2.42" rotation="23.78 -27.40 0" text="font: assets/asaturdaynight.txt; color: #fffd6a; align:center;width:3.8"></a-entity>
+      <a-entity id="counter1Text" visible="false" position="-1.66 2.18 2.16" rotation="23.78 147.24 0" text="font: assets/asaturdaynight.txt; color: #fffd6a; align:center;width:3.8"></a-entity>
+      <a-entity id="counter0" visible="false" position="0.87 2.18 -2.42" rotation="23.78 -27.40 0" text="font: assets/asaturdaynight.txt; color: #fffd6a; align:center;width:7.4"></a-entity>
+      <a-entity id="counter1" visible="false" position="-1.66 2.18 2.16" rotation="23.78 147.24 0" text="font: assets/asaturdaynight.txt; color: #fffd6a; align:center;width:7.4"></a-entity>
+      <a-entity id="centeredText" text="font: assets/asaturdaynight.txt; align: center; opacity: 1; width: 6.22;color:#fffdb3;" visible="false" position="0 1.4 -1"></a-entity>
       <a-entity id="collectText" visible="false">
-        <a-entity text="font: assets/asaturdaynight.fnt; align: center; opacity: 1; width: 3.3;color:#fffdb3;value:Copy your dance URL and share!" position="-1.4 1.25 0" rotation="0 90 0"></a-entity>
-        <a-entity text="font: assets/asaturdaynight.fnt; align: center; opacity: 1; width: 3.3;color:#fffdb3;value:Copy your dance URL and share!" position="1.6 1.25 0" rotation="0 -90 0"></a-entity>
+        <a-entity text="font: assets/asaturdaynight.txt; align: center; opacity: 1; width: 3.3;color:#fffdb3;value:Copy your dance URL and share!" position="-1.4 1.25 0" rotation="0 90 0"></a-entity>
+        <a-entity text="font: assets/asaturdaynight.txt; align: center; opacity: 1; width: 3.3;color:#fffdb3;value:Copy your dance URL and share!" position="1.6 1.25 0" rotation="0 -90 0"></a-entity>
       </a-entity>
 
 
-      <a-entity id="backText" text="font: assets/asaturdaynight.fnt; align: center; opacity: 1; width: 2.8; color:#fffdb3; value:( Turn around )" visible="false" position="0 1.4 2.19" rotation="0 180 0"></a-entity>
+      <a-entity id="backText" text="font: assets/asaturdaynight.txt; align: center; opacity: 1; width: 2.8; color:#fffdb3; value:( Turn around )" visible="false" position="0 1.4 2.19" rotation="0 180 0"></a-entity>
 
       <!-- Lights -->
       <a-entity id="light0" light="color:#f8b927;intensity:2;type:point;" position="0 -2 0.5"></a-entity>
@@ -170,7 +170,7 @@
       <a-entity id="tv2" gltf-model="#tv-obj" position="0.87 2.15 -2.44" rotation="0 151.8 0"></a-entity>
       <!-- Avatar selection -->
       <a-entity id="avatarSelection" scale="0.75 0.75 0.75" position="0 1.6 -2" visible="false">
-        <a-entity id="selectionText" text="font: assets/asaturdaynight.fnt; align: center; opacity: 1; width: 6.22; value:Select your avatar; color:#fffdb3;" position="0 -0.5 0"></a-entity>
+        <a-entity id="selectionText" text="font: assets/asaturdaynight.txt; align: center; opacity: 1; width: 6.22; value:Select your avatar; color:#fffdb3;" position="0 -0.5 0"></a-entity>
         <a-entity id="avatar1" class="avatar" rotation="0 180 0">
           <a-entity class="head" gltf-model="#avatar1-head-obj" position="1 0 0" highlighter="color:#ff8"></a-entity>
           <a-entity class="leftHand" gltf-model="#avatar1-hand-left-obj" visible="false"></a-entity>

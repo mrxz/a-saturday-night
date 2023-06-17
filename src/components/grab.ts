@@ -1,5 +1,7 @@
 /* global AFRAME */
 
+import { DetailEvent, Entity } from "aframe";
+
 /**
 * Handles events coming from the hand-controls.
 * Determines if the entity is grabbed or released.
@@ -16,6 +18,7 @@ AFRAME.registerComponent('grab', {
 
   play: function () {
     var el = this.el;
+    //@ts-ignore
     el.addEventListener('hit', this.onHit);
     el.addEventListener('gripclose', this.onGripClose);
     el.addEventListener('gripopen', this.onGripOpen);
@@ -27,6 +30,7 @@ AFRAME.registerComponent('grab', {
 
   pause: function () {
     var el = this.el;
+    //@ts-ignore
     el.removeEventListener('hit', this.onHit);
     el.removeEventListener('gripclose', this.onGripClose);
     el.removeEventListener('gripopen', this.onGripOpen);
@@ -36,12 +40,12 @@ AFRAME.registerComponent('grab', {
     el.removeEventListener('pointdown', this.onGripOpen);
   },
 
-  onGripClose: function (evt) {
+  onGripClose: function (_evt: Event) {
     this.grabbing = true;
     delete this.previousPosition;
   },
 
-  onGripOpen: function (evt) {
+  onGripOpen: function (_evt: Event) {
     var hitEl = this.hitEl;
     this.grabbing = false;
     if (!hitEl) { return; }
@@ -49,7 +53,7 @@ AFRAME.registerComponent('grab', {
     this.hitEl = undefined;
   },
 
-  onHit: function (evt) {
+  onHit: function (evt: DetailEvent<{el: Entity}>) {
     var hitEl = evt.detail.el;
     // If the element is already grabbed (it could be grabbed by another controller).
     // If the hand is not grabbing the element does not stick.

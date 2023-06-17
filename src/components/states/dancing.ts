@@ -1,29 +1,32 @@
+import { Entity } from 'aframe';
 import { capabilities } from '../../utils';
 const audioCapabilities = capabilities.audio;
 
 AFRAME.registerComponent('dancing', {
   init: function () {
     var el = this.el;
-    var textElement = this.textElement = document.getElementById('centeredText');
-    var counter0 = this.counter0 = document.getElementById('counter0');
-    var counter1 = this.counter1 = document.getElementById('counter1');
-    var soundEl = document.querySelector('#room [sound]');
-    this.avatarHeadEl = el.querySelector('#avatarHead');
+    var textElement = this.textElement = document.getElementById('centeredText')!;
+    var counter0 = this.counter0 = document.getElementById('counter0')!;
+    var counter1 = this.counter1 = document.getElementById('counter1')!;
+    var soundEl = document.querySelector('#room [sound]')!;
+    this.avatarHeadEl = el.querySelector('#avatarHead')!;
 
-    var avatarId = this.el.getAttribute('game-state').selectedAvatar.id;
+    var avatarId = this.el.getAttribute('game-state')!.selectedAvatar!.id;
+    //@ts-ignore
     var soundAsset = '#' + avatarId + (audioCapabilities.opus ? 'ogg' : 'mp3');
     el.setAttribute('game-state', 'dancingTime', document.querySelector(soundAsset).getAttribute('duration'));
     soundEl.setAttribute('sound', 'src', soundAsset);
 
-    el.querySelector('#floor').setAttribute('discofloor', {pattern: avatarId});
+    //@ts-ignore
+    el.querySelector('#floor')!.setAttribute('discofloor', {pattern: avatarId});
 
-    this.dancingTime = this.el.getAttribute('game-state').dancingTime;
+    this.dancingTime = this.el.getAttribute('game-state')!.dancingTime;
 
     textElement.setAttribute('visible', true);
     textElement.setAttribute('text', {value: 'Dance!', opacity: 1});
     textElement.setAttribute('animation', {
       property: 'text.opacity',
-      to: 0.0,
+      to: 0.0 as unknown as string, // FIXME
       dur: 500,
       delay: 300
     });
@@ -39,29 +42,31 @@ AFRAME.registerComponent('dancing', {
     counter1.setAttribute('visible', true);
 
     this.countdown = this.countdown.bind(this);
-    soundEl.components.sound.playSound();
+    //@ts-ignore
+    soundEl.components.sound!.playSound();
 
     this.setupAvatarMimo();
 
+    //@ts-ignore
     el.components['avatar-recorder'].startRecording();
     this.interval = window.setInterval(this.countdown, 1000);
   },
 
   setupAvatarMimo: function () {
-    var avatarEl = this.el.getAttribute('game-state').selectedAvatar;
+    var avatarEl = this.el.getAttribute('game-state')!.selectedAvatar!;
     var avatarMimoRigEl = this.avatarMimoRigEl = this.avatarMimoRigEl || this.initMimoRig();
     avatarMimoRigEl.setAttribute('visible', true);
     this.rightHandMimoEl.setAttribute('gltf-model',
-      avatarEl.querySelector('.rightHand').getAttribute('gltf-model'));
+      avatarEl.querySelector('.rightHand')!.getAttribute('gltf-model'));
     this.leftHandMimoEl.setAttribute('gltf-model',
-      avatarEl.querySelector('.leftHand').getAttribute('gltf-model'));
+      avatarEl.querySelector('.leftHand')!.getAttribute('gltf-model'));
     this.headMimoEl.setAttribute('gltf-model',
-      avatarEl.querySelector('.head').getAttribute('gltf-model'));
+      avatarEl.querySelector('.head')!.getAttribute('gltf-model'));
   },
 
   // fix until A-Frame issue is resolved
   // https://github.com/aframevr/aframe/issues/2928
-  whenLoaded: function(el) {
+  whenLoaded: function(el: Entity): Promise<Entity> {
     return new Promise(function (resolve) {
       if (el.hasLoaded) resolve(el);
       el.addEventListener('loaded', function() {
@@ -76,13 +81,13 @@ AFRAME.registerComponent('dancing', {
     var rightHandMimoEl = this.rightHandMimoEl = document.createElement('a-entity');
     var leftHandMimoEl = this.leftHandMimoEl = document.createElement('a-entity');
     var headMimoEl = this.headMimoEl = document.createElement('a-entity');
-    this.whenLoaded(headMimoEl).then(function (el) { el.setAttribute('mimo', '#avatarHead'); })
-    this.whenLoaded(rightHandMimoEl).then(function (el) { el.setAttribute('mimo', '#leftHand'); })
-    this.whenLoaded(leftHandMimoEl).then(function (el) { el.setAttribute('mimo', '#rightHand'); })
+    this.whenLoaded(headMimoEl).then(function (el: Entity) { el.setAttribute('mimo', '#avatarHead'); })
+    this.whenLoaded(rightHandMimoEl).then(function (el: Entity) { el.setAttribute('mimo', '#leftHand'); })
+    this.whenLoaded(leftHandMimoEl).then(function (el: Entity) { el.setAttribute('mimo', '#rightHand'); })
     avatarMimoRigEl.appendChild(rightHandMimoEl);
     avatarMimoRigEl.appendChild(leftHandMimoEl);
-    avatarMimoRigEl.setAttribute('position', '0 0 -2.5');
-    avatarMimoRigEl.setAttribute('rotation', '0 180 0');
+    avatarMimoRigEl.object3D.position.set(0, 0, -2.5);
+    avatarMimoRigEl.object3D.rotation.set(0, Math.PI, 0);
     avatarMimoRigEl.appendChild(headMimoEl);
     avatarMimoRigPivotEl.appendChild(avatarMimoRigEl);
     this.el.appendChild(avatarMimoRigPivotEl);
@@ -97,16 +102,17 @@ AFRAME.registerComponent('dancing', {
 
     if (this.dancingTime === 0) {
       window.clearInterval(this.interval);
+      //@ts-ignore
       el.components['avatar-recorder'].stopRecording();
-      document.getElementById('cameraRig').setAttribute('rotation', '0 180 0');
+      document.getElementById('cameraRig')!.object3D.rotation.set(0, Math.PI, 0);
     }
     el.setAttribute('game-state', 'dancingTime', this.dancingTime);
   },
 
   remove: function () {
     var el = this.el;
-    var leftHandEl = el.querySelector('#leftHand');
-    var rightHandEl = el.querySelector('#rightHand');
+    var leftHandEl = el.querySelector('#leftHand')! as Entity; // FIXME
+    var rightHandEl = el.querySelector('#rightHand')! as Entity; // FIXME
     this.textElement.setAttribute('visible', false);
     this.counter0.setAttribute('visible', false);
     this.counter1.setAttribute('visible', false);
@@ -124,7 +130,8 @@ AFRAME.registerComponent('dancing', {
     rightHandEl.setAttribute('position', {x: 0, y: 0, z:0});
     rightHandEl.setAttribute('rotation', {x: 0, y: 0, z:0});
 
-    document.querySelector('#room [sound]').components.sound.stopSound();
+    //@ts-ignore
+    document.querySelector('#room [sound]')!.components.sound!.stopSound();
     this.avatarMimoRigEl.setAttribute('visible', false);
   }
 });

@@ -11,7 +11,7 @@ AFRAME.registerComponent('instructions', {
     this.el.sceneEl.addEventListener('loaded', this.downloadDance.bind(this));
   },
 
-  handleDanceData: function (data) {
+  handleDanceData: function (data: any) {
     this.danceData = data;
 
     var sceneEl = this.el.sceneEl;
@@ -51,7 +51,7 @@ AFRAME.registerComponent('instructions', {
     var el = this.el;
     document.querySelector('.instructions-overlay').style.display = 'none';
     el.setAttribute('game-state', 'state', 'replay');
-    el.components['replay'].loadDance(this.danceData);
+    el.components['replay']!.loadDance(this.danceData);
   },
 
   play: function () {
