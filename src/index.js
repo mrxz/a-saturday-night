@@ -1,23 +1,26 @@
-require('./ui2d.js');
+import './lib/aframe-master.js';
+import './lib/aframe-motion-capture-components.js';
+
+import './ui2d.js';
 
 // Components.
-require('./components/proxy-event.js');
-require('./components/aabb-collider.js');
-require('./components/game-state.js');
-require('./components/avatar-selector.js');
-require('./components/ground.js');
-require('./components/mimo.js');
-require('./components/discofloor.js');
-require('./components/spotlight.js');
-require('./components/highlighter.js');
-require('./components/roomcolor.js');
-require('./components/ui-raycaster.js');
-require('./components/gifcapture.js');
+import './components/proxy-event.js';
+import './components/aabb-collider.js';
+import './components/game-state.js';
+import './components/avatar-selector.js';
+import './components/ground.js';
+import './components/mimo.js';
+import './components/discofloor.js';
+import './components/spotlight.js';
+import './components/highlighter.js';
+import './components/roomcolor.js';
+import './components/ui-raycaster.js';
+import './components/gifcapture.js';
 
 // States
-require('./components/states/avatarSelection.js');
-require('./components/states/collectUrl.js');
-require('./components/states/countdown.js');
-require('./components/states/dancing.js');
-require('./components/states/instructions.js');
-require('./components/states/replay.js');
+import './components/states/avatarSelection.js';
+import './components/states/collectUrl.js';
+import './components/states/countdown.js';
+import './components/states/dancing.js';
+import './components/states/instructions.js';
+import './components/states/replay.js';

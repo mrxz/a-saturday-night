@@ -4,7 +4,7 @@
   "description": "A WebVR dancing experience using A-Frame by Mozilla VR.",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "start": "webpack-dev-server --host 0.0.0.0 --port 4000 --progress --colors --hot -d --inline",
+    "start": "vite",
     "lint": "semistandard -v | snazzy"
   },
   "repository": "aframevr/a-saturday-night",
@@ -21,5 +21,11 @@
     "snazzy": "^4.0.1",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.1"
+  },
+  "dependencies": {
+    "aframe-types": "^0.8.8",
+    "aframe-typescript": "^0.8.0",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.9"
   }
 }

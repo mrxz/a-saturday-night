@@ -3,3 +3,8 @@
 gh-pages/
 node_modules
 npm-debug.log*
+
+firebase.json
+.firebaserc
+public/
+.firebase/

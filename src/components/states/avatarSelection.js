@@ -1,4 +1,5 @@
-var audioCapabilities = require('../../utils').capabilities.audio;
+import { capabilities } from '../../utils';
+const audioCapabilities = capabilities.audio;
 
 AFRAME.registerComponent('avatar-selection', {
   init: function () {

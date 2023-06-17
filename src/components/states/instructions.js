@@ -1,5 +1,4 @@
-var getUrlParams = require('../../utils').getUrlParams;
-var defaultDanceData = require('json!../../../assets/dance.json');
+import defaultDanceData from '../../../assets/dance.json';
 
 AFRAME.registerComponent('instructions', {
   init: function () {

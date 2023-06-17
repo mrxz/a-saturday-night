@@ -1,4 +1,4 @@
-function getUrlParams () {
+export function getUrlParams () {
   var match;
   var pl = /\+/g;  // Regex for replacing addition symbol with a space
   var search = /([^&=]+)=?([^&]*)/g;
@@ -61,10 +61,7 @@ var getVideoCapabilities = (function (el) {
   };
 })(document.createElement('video'));
 
-module.exports = {
-  getUrlParams: getUrlParams,
-  capabilities: {
-    audio: getAudioCapabilities,
-    video: getVideoCapabilities
-  }
+export const capabilities = {
+  audio: getAudioCapabilities,
+  video: getVideoCapabilities
 };

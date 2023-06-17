@@ -1,4 +1,4 @@
-var getUrlParams = require('./utils').getUrlParams;
+import { getUrlParams } from './utils';
 
 /* global Clipboard */
 window.addEventListener('load', function (event) {

@@ -869,7 +869,7 @@
 	      if (key === 'camera') {
 	        self.puppetEl.removeComponent('motion-capture-replayer');
 	      } else {
-	        el = document.querySelector('#' + key);
+			var el = document.querySelector('#' + key);
 	        if (!el) { warn('No element with id ' + key); }
 	        el.removeComponent('motion-capture-replayer');
 	      }
@@ -992,7 +992,7 @@
 	  reset: function () {
 	    var idx = 0;
 	    var vertices = this.vertices;
-	    for (i = 0; i < this.numPoints; i++) {
+	    for (var i = 0; i < this.numPoints; i++) {
 	      vertices[idx++] = 0;
 	      vertices[idx++] = 0;
 	      vertices[idx++] = 0;
